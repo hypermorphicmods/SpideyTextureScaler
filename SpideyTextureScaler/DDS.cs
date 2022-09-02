@@ -41,7 +41,7 @@ namespace SpideyTextureScaler
                     (Height & (Height - 1)) != 0 ||
                     (Width & (Width - 1)) != 0)
                 {
-                    output += "Must be a square texture and a power of 2\r\n";
+                    output += "Texture widths and heights must be a power of 2\r\n";
                     errorcol = 2;
                     return false;
                 }
@@ -76,12 +76,37 @@ namespace SpideyTextureScaler
             }
         }
 
-        public bool Write(byte[] hdmipmaps, byte[] mipmaps, out string output)
+        public bool Write(byte[] hdmipmaps, List<byte[]> mipmaps, out string output)
+        {
+           if (Images > 1)
+            {
+                output = "";
+                bool ret = false;
+                for (int i = 0; i < Images; i++)
+                {
+                    string o2;
+                    ret |= WriteSingle(
+                        hdmipmaps.Skip(i * hdmipmaps.Length / (int)Images).Take(hdmipmaps.Length / (int)Images).ToArray(),
+                        mipmaps[i],
+                        i, out o2);
+                    output += o2;
+                }
+                output += "\r\n";
+                return ret;
+            }
+            else
+                return WriteSingle(hdmipmaps, mipmaps[0], -1, out output);
+        }
+
+        public bool WriteSingle(byte[] hdmipmaps, byte[] mipmaps, int image, out string output)
         {
             // just assume everything has been set correctly!
             output = "";
+            string fn = Filename;
+            if (image > -1)
+                fn = Path.ChangeExtension(fn, $".A{image}.dds");
 
-            using (var fs = File.Open(Filename, FileMode.Create))
+            using (var fs = File.Open(fn, FileMode.Create))
             using (var bw = new BinaryWriter(fs))
             {
                 bw.Write(Encoding.ASCII.GetBytes("DDS "));
@@ -125,7 +150,7 @@ namespace SpideyTextureScaler
 
                 bw.Write(mipmaps);
 
-                output += $"Wrote {fs.Position} bytes to: {Filename}\r\n";
+                output += $"Wrote {fs.Position} bytes to: {fn}\r\n";
             }
 
             return true;

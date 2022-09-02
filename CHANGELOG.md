@@ -1,5 +1,17 @@
 ﻿# Change Log
 
+## 1.2
+
+### Added
+- Support for texture arrays (export/modify/scale)
+
+### Changed
+- Verbiage
+
+### Fixed
+- Grid location of various error markings
+
+
 ## 1.1
 
 ### Added

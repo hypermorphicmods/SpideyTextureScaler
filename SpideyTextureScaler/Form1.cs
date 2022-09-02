@@ -22,6 +22,12 @@ namespace SpideyTextureScaler
 
         private void UpdateGenerateButton()
         {
+            if (program.texturestats[0].Ready && program.texturestats[0].Images > 0 && program.texturestats[1].Ready && 
+                program.texturestats[1].Images < program.texturestats[0].Images)
+            {
+                program.texturestats[1].Ready = false;
+                MarkError(1, 6);
+            }
             generatebutton.Enabled = program.texturestats[0].Ready && program.texturestats[1].Ready && program.texturestats[2].Ready;
         }
 
@@ -43,12 +49,14 @@ namespace SpideyTextureScaler
                 program.texturestats[0] = obj = new Source();
 
                 obj.Filename = f.FileName;
-                ddsfilenamelabel.Text = Path.GetFileName(Path.ChangeExtension(obj.Filename, ".dds"));
+
                 if (obj.Read(out output, out errorrow, out errorcol))
                 {
                     saveddsbutton.Enabled = true;
                     this.Text = $"{Path.GetFileNameWithoutExtension(Path.GetFileName(obj.Filename))} - SpideyTextureScaler";
                 }
+                ddsfilenamelabel.Text = Path.GetFileName(Path.ChangeExtension(obj.Filename, (obj.Images > 1 ? ".Ax.dds" : ".dds")));
+                saveddsbutton.Text = obj.Images > 1 ? "Save multiple .dds" : "Save as .dds";
 
                 outputbox.Text = output;
             }
@@ -67,6 +75,7 @@ namespace SpideyTextureScaler
             var savedds = new DDS();
             savedds.Filename = Path.ChangeExtension(tex.Filename, ".dds");
             savedds.Mipmaps = tex.Mipmaps;
+            savedds.Images = tex.Images;
             savedds.Format = tex.Format;
             savedds.basemipsize = tex.basemipsize;
             byte[] hdmips = null;
@@ -104,7 +113,7 @@ namespace SpideyTextureScaler
         private void ddsbutton_Click(object sender, EventArgs e)
         {
             var f = new OpenFileDialog();
-            f.Filter = "DirectDraw Surface (*.dds)|*.dds";
+            f.Filter = program.texturestats[0].Images > 1  ? "DirectDraw Surface Array (*.A0.dds)|*.A0.dds" : "DirectDraw Surface (*.dds)|*.dds";
             var obj = (DDS)program.texturestats[1];
             obj.ResetVisible();
             ClearErrorRow(dataGridView1.Rows[1]);
@@ -118,8 +127,18 @@ namespace SpideyTextureScaler
 
                 obj.Filename = f.FileName;
                 obj.Read(out output, out errorrow, out errorcol);
+                obj.Images = 1;
+                if (obj.Filename.ToLower().EndsWith(".a0.dds"))
+                {
+                    var stub = obj.Filename.Substring(0, obj.Filename.Length - ".a0.dds".Length);
+                    for (obj.Images = 1; obj.Images < 32; obj.Images++)
+                    {
+                        if (!File.Exists($"{stub}.A{obj.Images}.dds"))
+                            break;
+                    }
+                    output += $"({obj.Images} textures available)\r\n";
+                }
                 outputbox.Text = output;
-
             }
 
             dataGridView1.Refresh();
@@ -133,7 +152,7 @@ namespace SpideyTextureScaler
         private void outputbutton_Click(object sender, EventArgs e)
         {
             var f = new SaveFileDialog();
-            f.Filter = "High res mod texture|*.texture";
+            f.Filter = "Modified texture|*.texture";
             var obj = (Output)program.texturestats[2];
             obj.ResetVisible();
 
@@ -187,9 +206,23 @@ namespace SpideyTextureScaler
             if (!generatebutton.Enabled)
                 return;
 
+            var ddss = new List<DDS>() { (DDS)(program.texturestats[1]) };
+            var stub = ddss[0].Filename.Substring(0, ddss[0].Filename.Length - ".a0.dds".Length);
+            for (int i = 1; i < program.texturestats[0].Images ; i++)
+            {
+                ddss.Add(new DDS());
+                ddss[i].Filename = $"{stub}.A{i}.dds";
+                if (!ddss[i].Read(out output, out errorrow, out errorcol))
+                {
+                    MarkError(errorrow, errorcol);
+                    outputbox.Text += output;
+                    return;
+                }
+                outputbox.Text += output;
+            }
             ((Output)program.texturestats[2]).Generate(
                 (Source)(program.texturestats[0]),
-                (DDS)(program.texturestats[1]), 
+                ddss, 
                 testmode.Checked, 
                 ignoreformat.Checked,
                 out output, out errorrow, out errorcol);

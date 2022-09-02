@@ -31,6 +31,7 @@ namespace SpideyTextureScaler
         public uint? Mipmaps { get; set; }
         public uint? HDMipmaps { get; set; }
         public double? BytesPerPixel { get; set; }
+        public uint? Images { get; set;  }
         public uint? Size { get; set; }
         public uint? HDSize { get; set; }
         public DXGI_FORMAT? Format { get; set; }

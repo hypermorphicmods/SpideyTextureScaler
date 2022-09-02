@@ -10,7 +10,7 @@ namespace SpideyTextureScaler
     {
         public byte[] header;
         public byte[] textureheader;
-        public byte[] mipmaps;
+        public List<byte[]> mipmaps;
         public string hdfilename;
         public bool exportable;
 
@@ -65,8 +65,13 @@ namespace SpideyTextureScaler
                 HDSize = br.ReadUInt32();
                 HDMipmaps = 0;
                 Mipmaps = 0;
+                Width = br.ReadUInt16();
+                Height = br.ReadUInt16();
+                sd_width = br.ReadUInt16();
+                sd_height = br.ReadUInt16();
+                Images = br.ReadUInt16();
 
-                int s = (int)HDSize;
+                int s = (int)(HDSize / Images);
                 int maxmipexp = (int)Math.Floor(Math.Log(s) / Math.Log(2));
                 if (HDSize > 0)
                 {
@@ -77,7 +82,7 @@ namespace SpideyTextureScaler
                     }
                 }
 
-                s = (int)Size;
+                s = (int)(Size / Images);
                 maxmipexp = (int)Math.Floor(Math.Log(s) / Math.Log(2));
                 basemipsize = 1 << maxmipexp;
                 for (int i = maxmipexp; s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
@@ -86,13 +91,9 @@ namespace SpideyTextureScaler
                     s -= 1 << i;
                 }
 
-                Width = br.ReadUInt16();
-                Height = br.ReadUInt16();
-                sd_width = br.ReadUInt16();
-                sd_height = br.ReadUInt16();
                 BytesPerPixel = Math.Pow(2, (Math.Floor(Math.Log((double)basemipsize / sd_width / sd_height) / Math.Log(2))));
                 aspect = (int)(Math.Log((double)Width / (double)Height) / Math.Log(2));
-                br.ReadUInt16();
+
                 br.ReadByte();
                 var channels = br.ReadByte();
                 var dxgi_format = br.ReadUInt16();
@@ -113,25 +114,28 @@ namespace SpideyTextureScaler
                 }
 
                 fs.Seek(11, SeekOrigin.Current);
-                mipmaps = br.ReadBytes((int)Size);
+                mipmaps = new();
+                for (int i = 0; i < Images; i++)
+                    mipmaps.Add(br.ReadBytes((int)(Size / Images)));
 
+                var arraytxt = Images > 1 ? $"with {Images} packed textures " : "";
                 if (HDSize == 0)
                 {
                     hdfilename = "";
-                    output += $"Source loaded (single part texture)\r\n";
+                    output += $"Source {arraytxt}loaded (single part texture)\r\n";
                 }
                 else
                 {
                     hdfilename = Path.ChangeExtension(Filename, ".hd.texture");
                     if (File.Exists(hdfilename))
-                        output += $"Source loaded (hd part found)\r\n";
+                        output += $"Source {arraytxt}loaded (hd part found)\r\n";
                     else if (File.Exists(Filename.Replace(".texture", "_hd.texture")))
                     {
                         hdfilename = hdfilename.Replace(".texture", "_hd.texture");
-                        output += $"Source loaded (found SpiderTex style _hd file)\r\n";
+                        output += $"Source {arraytxt}loaded (found SpiderTex style _hd file)\r\n";
                     }
                     else
-                        output += $"Source loaded (hd part MISSING)\r\n";
+                        output += $"Source {arraytxt}loaded (hd part MISSING)\r\n";
                 }
                 Ready = errorcol == -1;
                 return true;
