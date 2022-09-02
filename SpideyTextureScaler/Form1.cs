@@ -46,8 +46,6 @@ namespace SpideyTextureScaler
                 ddsfilenamelabel.Text = Path.GetFileName(Path.ChangeExtension(obj.Filename, ".dds"));
                 if (obj.Read(out output, out errorrow, out errorcol))
                 {
-                    obj.Ready = true;
-                    errorcol = -1;
                     saveddsbutton.Enabled = true;
                     this.Text = $"{Path.GetFileNameWithoutExtension(Path.GetFileName(obj.Filename))} - SpideyTextureScaler";
                 }
@@ -74,28 +72,29 @@ namespace SpideyTextureScaler
             byte[] hdmips = null;
             string output;
 
-            var hdfilename = Path.ChangeExtension(tex.Filename, ".hd.texture");
-            if (!File.Exists(hdfilename))
+            savedds.HDMipmaps = 0;
+            savedds.Width = tex.Width;
+            savedds.Height = tex.Height;
+            if (tex.HDSize > 0)
             {
-                if (MessageBox.Show($"No corresponding .hd.texture file found.\r\n\r\nDo you want to proceed with the low resolution texture ({tex.sd_width} x {tex.sd_height})?",
+                if (!File.Exists(tex.hdfilename))
+                {
+                    if (MessageBox.Show($"No corresponding .hd.texture file found.\r\n\r\nDo you want to proceed with the low resolution texture ({tex.sd_width} x {tex.sd_height})?",
                     "Alert",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question) == DialogResult.No)
-                {
-                    return;
-                }
+                    {
+                        return;
+                    }
 
-                savedds.HDMipmaps = 0;
-                savedds.Width = (uint)tex.sd_width;
-                savedds.Height = (uint)tex.sd_height;
-                
-            }
-            else
-            {
-                savedds.HDMipmaps = tex.HDMipmaps;
-                savedds.Width = tex.Width;
-                savedds.Height = tex.Height;
-                hdmips = File.ReadAllBytes(hdfilename);
+                    savedds.Width = (uint)tex.sd_width;
+                    savedds.Height = (uint)tex.sd_height;
+                }
+                else
+                {
+                    savedds.HDMipmaps = tex.HDMipmaps;
+                    hdmips = File.ReadAllBytes(tex.hdfilename);
+                }
             }
 
             savedds.Write(hdmips, tex.mipmaps, out output);
@@ -111,16 +110,14 @@ namespace SpideyTextureScaler
             ClearErrorRow(dataGridView1.Rows[1]);
             string output;
             int errorrow = 0;
-            int errorcol = 0;
+            int errorcol = -1;
 
             if (f.ShowDialog() == DialogResult.OK)
             {
                 program.texturestats[1] = obj = new DDS();
 
                 obj.Filename = f.FileName;
-                if (obj.Read(out output, out errorrow, out errorcol))
-                    obj.Ready = true;
-
+                obj.Read(out output, out errorrow, out errorcol);
                 outputbox.Text = output;
 
             }
@@ -190,7 +187,12 @@ namespace SpideyTextureScaler
             if (!generatebutton.Enabled)
                 return;
 
-            ((Output)program.texturestats[2]).Generate((Source)(program.texturestats[0]), (DDS)(program.texturestats[1]), testmode.Checked, out output, out errorrow, out errorcol);
+            ((Output)program.texturestats[2]).Generate(
+                (Source)(program.texturestats[0]),
+                (DDS)(program.texturestats[1]), 
+                testmode.Checked, 
+                ignoreformat.Checked,
+                out output, out errorrow, out errorcol);
 
             outputbox.AppendText(output);
             dataGridView1.Refresh();

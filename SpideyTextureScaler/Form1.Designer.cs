@@ -59,6 +59,7 @@
             this.ddsfilenamelabel = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ignoreformat = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.texturestatsBindingSource)).BeginInit();
@@ -72,7 +73,7 @@
             // 
             this.sourcebutton.Location = new System.Drawing.Point(24, 40);
             this.sourcebutton.Name = "sourcebutton";
-            this.sourcebutton.Size = new System.Drawing.Size(272, 40);
+            this.sourcebutton.Size = new System.Drawing.Size(272, 48);
             this.sourcebutton.TabIndex = 0;
             this.sourcebutton.Text = "Import extracted .texture";
             this.sourcebutton.UseVisualStyleBackColor = true;
@@ -86,7 +87,7 @@
             // 
             this.ddsbutton.Location = new System.Drawing.Point(24, 40);
             this.ddsbutton.Name = "ddsbutton";
-            this.ddsbutton.Size = new System.Drawing.Size(272, 56);
+            this.ddsbutton.Size = new System.Drawing.Size(272, 48);
             this.ddsbutton.TabIndex = 2;
             this.ddsbutton.Text = "Choose .dds texture";
             this.ddsbutton.UseVisualStyleBackColor = true;
@@ -94,9 +95,9 @@
             // 
             // outputbutton
             // 
-            this.outputbutton.Location = new System.Drawing.Point(39, 34);
+            this.outputbutton.Location = new System.Drawing.Point(24, 34);
             this.outputbutton.Name = "outputbutton";
-            this.outputbutton.Size = new System.Drawing.Size(272, 56);
+            this.outputbutton.Size = new System.Drawing.Size(272, 48);
             this.outputbutton.TabIndex = 4;
             this.outputbutton.Text = "Choose output .texture";
             this.outputbutton.UseVisualStyleBackColor = true;
@@ -105,9 +106,9 @@
             // generatebutton
             // 
             this.generatebutton.Enabled = false;
-            this.generatebutton.Location = new System.Drawing.Point(64, 129);
+            this.generatebutton.Location = new System.Drawing.Point(88, 112);
             this.generatebutton.Name = "generatebutton";
-            this.generatebutton.Size = new System.Drawing.Size(218, 80);
+            this.generatebutton.Size = new System.Drawing.Size(208, 80);
             this.generatebutton.TabIndex = 6;
             this.generatebutton.Text = "Generate";
             this.generatebutton.UseVisualStyleBackColor = true;
@@ -117,8 +118,7 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
@@ -137,7 +137,7 @@
             this.formatDataGridViewTextBoxColumn});
             this.dataGridView1.DataSource = this.texturestatsBindingSource;
             this.dataGridView1.EnableHeadersVisualStyles = false;
-            this.dataGridView1.Location = new System.Drawing.Point(24, 643);
+            this.dataGridView1.Location = new System.Drawing.Point(24, 680);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -152,7 +152,7 @@
             this.dataGridView1.RowHeadersWidth = 72;
             this.dataGridView1.RowTemplate.Height = 37;
             this.dataGridView1.ShowEditingIcon = false;
-            this.dataGridView1.Size = new System.Drawing.Size(1408, 170);
+            this.dataGridView1.Size = new System.Drawing.Size(1440, 192);
             this.dataGridView1.TabIndex = 7;
             // 
             // nameDataGridViewTextBoxColumn
@@ -255,9 +255,9 @@
             this.statusgroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.statusgroup.Controls.Add(this.outputbox);
-            this.statusgroup.Location = new System.Drawing.Point(351, 114);
+            this.statusgroup.Location = new System.Drawing.Point(376, 88);
             this.statusgroup.Name = "statusgroup";
-            this.statusgroup.Size = new System.Drawing.Size(1055, 144);
+            this.statusgroup.Size = new System.Drawing.Size(1048, 224);
             this.statusgroup.TabIndex = 8;
             this.statusgroup.TabStop = false;
             this.statusgroup.Text = "Log";
@@ -272,13 +272,13 @@
             this.outputbox.Name = "outputbox";
             this.outputbox.ReadOnly = true;
             this.outputbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputbox.Size = new System.Drawing.Size(1023, 80);
+            this.outputbox.Size = new System.Drawing.Size(1016, 160);
             this.outputbox.TabIndex = 0;
             // 
             // sourcelabel
             // 
             this.sourcelabel.AutoSize = true;
-            this.sourcelabel.Location = new System.Drawing.Point(336, 48);
+            this.sourcelabel.Location = new System.Drawing.Point(376, 45);
             this.sourcelabel.Name = "sourcelabel";
             this.sourcelabel.Size = new System.Drawing.Size(148, 30);
             this.sourcelabel.TabIndex = 9;
@@ -287,7 +287,7 @@
             // ddslabel
             // 
             this.ddslabel.AutoSize = true;
-            this.ddslabel.Location = new System.Drawing.Point(336, 40);
+            this.ddslabel.Location = new System.Drawing.Point(376, 45);
             this.ddslabel.Name = "ddslabel";
             this.ddslabel.Size = new System.Drawing.Size(148, 30);
             this.ddslabel.TabIndex = 9;
@@ -296,7 +296,7 @@
             // outputlabel
             // 
             this.outputlabel.AutoSize = true;
-            this.outputlabel.Location = new System.Drawing.Point(351, 34);
+            this.outputlabel.Location = new System.Drawing.Point(376, 40);
             this.outputlabel.Name = "outputlabel";
             this.outputlabel.Size = new System.Drawing.Size(148, 30);
             this.outputlabel.TabIndex = 9;
@@ -305,7 +305,7 @@
             // testmode
             // 
             this.testmode.AutoSize = true;
-            this.testmode.Location = new System.Drawing.Point(15, 224);
+            this.testmode.Location = new System.Drawing.Point(24, 224);
             this.testmode.Name = "testmode";
             this.testmode.Size = new System.Drawing.Size(337, 34);
             this.testmode.TabIndex = 10;
@@ -316,9 +316,9 @@
             // saveddsbutton
             // 
             this.saveddsbutton.Enabled = false;
-            this.saveddsbutton.Location = new System.Drawing.Point(24, 104);
+            this.saveddsbutton.Location = new System.Drawing.Point(88, 104);
             this.saveddsbutton.Name = "saveddsbutton";
-            this.saveddsbutton.Size = new System.Drawing.Size(272, 40);
+            this.saveddsbutton.Size = new System.Drawing.Size(208, 48);
             this.saveddsbutton.TabIndex = 0;
             this.saveddsbutton.Text = "Save as .dds";
             this.saveddsbutton.UseVisualStyleBackColor = true;
@@ -332,9 +332,9 @@
             this.groupBox1.Controls.Add(this.sourcelabel);
             this.groupBox1.Controls.Add(this.saveddsbutton);
             this.groupBox1.Controls.Add(this.sourcebutton);
-            this.groupBox1.Location = new System.Drawing.Point(24, 8);
+            this.groupBox1.Location = new System.Drawing.Point(24, 24);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1424, 168);
+            this.groupBox1.Size = new System.Drawing.Size(1440, 168);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Game resources";
@@ -342,7 +342,7 @@
             // ddsfilenamelabel
             // 
             this.ddsfilenamelabel.AutoSize = true;
-            this.ddsfilenamelabel.Location = new System.Drawing.Point(336, 104);
+            this.ddsfilenamelabel.Location = new System.Drawing.Point(376, 113);
             this.ddsfilenamelabel.Name = "ddsfilenamelabel";
             this.ddsfilenamelabel.Size = new System.Drawing.Size(0, 30);
             this.ddsfilenamelabel.TabIndex = 9;
@@ -353,9 +353,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.ddslabel);
             this.groupBox2.Controls.Add(this.ddsbutton);
-            this.groupBox2.Location = new System.Drawing.Point(24, 176);
+            this.groupBox2.Location = new System.Drawing.Point(24, 200);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1424, 128);
+            this.groupBox2.Size = new System.Drawing.Size(1440, 120);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Modded texture";
@@ -364,23 +364,36 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.ignoreformat);
             this.groupBox3.Controls.Add(this.testmode);
             this.groupBox3.Controls.Add(this.outputlabel);
             this.groupBox3.Controls.Add(this.statusgroup);
             this.groupBox3.Controls.Add(this.generatebutton);
             this.groupBox3.Controls.Add(this.outputbutton);
-            this.groupBox3.Location = new System.Drawing.Point(24, 320);
+            this.groupBox3.Location = new System.Drawing.Point(24, 328);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(1424, 280);
+            this.groupBox3.Size = new System.Drawing.Size(1440, 336);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Output";
+            // 
+            // ignoreformat
+            // 
+            this.ignoreformat.AutoSize = true;
+            this.ignoreformat.Location = new System.Drawing.Point(24, 263);
+            this.ignoreformat.Name = "ignoreformat";
+            this.ignoreformat.Size = new System.Drawing.Size(269, 34);
+            this.ignoreformat.TabIndex = 10;
+            this.ignoreformat.Text = "Ignore Format difference";
+            this.ignoreformat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ignoreformat.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1465, 842);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(1484, 899);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -433,5 +446,6 @@
         private GroupBox groupBox2;
         private GroupBox groupBox3;
         private Label ddsfilenamelabel;
+        private CheckBox ignoreformat;
     }
 }

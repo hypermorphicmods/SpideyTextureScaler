@@ -11,9 +11,8 @@ namespace SpideyTextureScaler
         public byte[] header;
         public byte[] textureheader;
         public byte[] mipmaps;
-        public int sd_mipmap_count;
-        public int hd_mipmap_count;
-        public byte extra_hd_mipmaps;
+        public string hdfilename;
+        public bool exportable;
 
         public Source()
         {
@@ -25,6 +24,7 @@ namespace SpideyTextureScaler
             output = "";
             errorrow = 0;
             errorcol = -1;
+            exportable = false;
 
             using (var fs = File.Open(Filename, FileMode.Open, FileAccess.Read))
             using (BinaryReader br = new BinaryReader(fs))
@@ -63,26 +63,24 @@ namespace SpideyTextureScaler
                 fs.Seek((int)offset + 36, SeekOrigin.Begin);
                 Size = br.ReadUInt32();
                 HDSize = br.ReadUInt32();
-                if (HDSize == 0)
+                HDMipmaps = 0;
+                Mipmaps = 0;
+
+                int s = (int)HDSize;
+                int maxmipexp = (int)Math.Floor(Math.Log(s) / Math.Log(2));
+                if (HDSize > 0)
                 {
-                    output += "No HD texture found...\r\n";
-                    errorcol = 1;
-                    return false;
+                    for (int i = maxmipexp; s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
+                    {
+                        HDMipmaps++;
+                        s -= 1 << i;
+                    }
                 }
 
-                HDMipmaps = 0;
-                int maxmipexp = (int)Math.Floor(Math.Log((double)HDSize) / Math.Log(2));
-                int s = (int)HDSize;
-                for (int i = maxmipexp; s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
-                {
-                    HDMipmaps++;
-                    s -= 1 << i;
-                }
-                Mipmaps = 0;
                 s = (int)Size;
-                basemipsize = 1 << (int)Math.Floor(Math.Log(s) / Math.Log(2));
-                
-                for (int i = maxmipexp - (2 * (int)HDMipmaps); s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
+                maxmipexp = (int)Math.Floor(Math.Log(s) / Math.Log(2));
+                basemipsize = 1 << maxmipexp;
+                for (int i = maxmipexp; s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
                 {
                     Mipmaps++;
                     s -= 1 << i;
@@ -92,43 +90,50 @@ namespace SpideyTextureScaler
                 Height = br.ReadUInt16();
                 sd_width = br.ReadUInt16();
                 sd_height = br.ReadUInt16();
-                BytesPerPixel = (uint)(basemipsize / sd_width / sd_height);
+                BytesPerPixel = Math.Pow(2, (Math.Floor(Math.Log((double)basemipsize / sd_width / sd_height) / Math.Log(2))));
+                aspect = (int)(Math.Log((double)Width / (double)Height) / Math.Log(2));
                 br.ReadUInt16();
                 br.ReadByte();
                 var channels = br.ReadByte();
                 var dxgi_format = br.ReadUInt16();
                 Format = (DXGI_FORMAT?)dxgi_format;
-
-                br.ReadByte();
-                sd_mipmap_count = br.ReadByte();
-                if (sd_mipmap_count > 0 && sd_mipmap_count != Mipmaps)
+                br.ReadBytes(8);
+                if (Mipmaps != br.ReadByte())
                 {
                     output += "Mipmap count discrepancy\r\n";
                     errorcol = 4;
                     return false;
                 }
                 br.ReadByte();
-                hd_mipmap_count = br.ReadByte();
-                if (hd_mipmap_count > 0 && hd_mipmap_count != HDMipmaps)
+                if (HDMipmaps != br.ReadByte())
                 {
                     output += "HDMipmap count discrepancy\r\n";
-                    errorcol = 5;
-                    return false;
-                }
-
-                fs.Seek(6, SeekOrigin.Current);
-                extra_hd_mipmaps = br.ReadByte();
-                if (hd_mipmap_count == 0 && extra_hd_mipmaps != HDMipmaps)
-                {
-                    output += "Extra mipmap count discrepancy\r\n";
-                    errorcol = 5;
+                    errorcol = 4;
                     return false;
                 }
 
                 fs.Seek(11, SeekOrigin.Current);
                 mipmaps = br.ReadBytes((int)Size);
 
-                output += $"Source loaded\r\n";
+                if (HDSize == 0)
+                {
+                    hdfilename = "";
+                    output += $"Source loaded (single part texture)\r\n";
+                }
+                else
+                {
+                    hdfilename = Path.ChangeExtension(Filename, ".hd.texture");
+                    if (File.Exists(hdfilename))
+                        output += $"Source loaded (hd part found)\r\n";
+                    else if (File.Exists(Filename.Replace(".texture", "_hd.texture")))
+                    {
+                        hdfilename = hdfilename.Replace(".texture", "_hd.texture");
+                        output += $"Source loaded (found SpiderTex style _hd file)\r\n";
+                    }
+                    else
+                        output += $"Source loaded (hd part MISSING)\r\n";
+                }
+                Ready = errorcol == -1;
                 return true;
             }
         }

@@ -36,7 +36,7 @@ namespace SpideyTextureScaler
                 br.ReadUInt32();
                 Height = br.ReadUInt32();
                 Width = br.ReadUInt32();
-                if (Height * Width == 0 || Height != Width ||
+                if (Height * Width == 0 ||
                     // power of 2 trick
                     (Height & (Height - 1)) != 0 ||
                     (Width & (Width - 1)) != 0)
@@ -45,6 +45,8 @@ namespace SpideyTextureScaler
                     errorcol = 2;
                     return false;
                 }
+                aspect = (int)(Math.Log((double)Width / (double)Height) / Math.Log(2));
+
                 // avoid Microsoft's pitch / linearsize screw-up
                 br.ReadUInt32();
 
@@ -66,9 +68,10 @@ namespace SpideyTextureScaler
 
                 // calculate based on remaining data
                 Size = (uint)(fs.Length - fs.Position);
-                BytesPerPixel = (uint)(1 << (int)Math.Floor(Math.Log((double)Size) / Math.Log(2))) / Width / Height;
+                BytesPerPixel = Math.Pow(2, Math.Floor(Math.Log((double)Size) / Math.Log(2))) / Width / Height;
 
                 output += $"DDS loaded\r\n";
+                Ready = true;
                 return true;
             }
         }
@@ -102,7 +105,7 @@ namespace SpideyTextureScaler
                 bw.Write(new byte[5 * 4]);
 
                 // caps
-                bw.Write((uint)(DDS_Caps.DDSCAPS_COMPLEX | DDS_Caps.DDSCAPS_TEXTURE | DDS_Caps.DDSCAPS_MIPMAP));
+                bw.Write((uint)(DDS_Caps.DDSCAPS_TEXTURE | (Mipmaps + HDMipmaps > 0 ? DDS_Caps.DDSCAPS_COMPLEX | DDS_Caps.DDSCAPS_MIPMAP : 0)));
                 // caps2-4, reserved
                 bw.Write(new byte[4 * 4]);
 

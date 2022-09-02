@@ -2,7 +2,6 @@ namespace SpideyTextureScaler
 {
     public class Program
     {
-        public string sourcefile { get ; set; }
         public List<TextureBase> texturestats { get; set; }
 
         [STAThread]
@@ -31,7 +30,7 @@ namespace SpideyTextureScaler
         public uint? Height { get; set; }
         public uint? Mipmaps { get; set; }
         public uint? HDMipmaps { get; set; }
-        public uint? BytesPerPixel { get; set; }
+        public double? BytesPerPixel { get; set; }
         public uint? Size { get; set; }
         public uint? HDSize { get; set; }
         public DXGI_FORMAT? Format { get; set; }
@@ -40,9 +39,10 @@ namespace SpideyTextureScaler
         public string? Filename { get; set; }
 
         // non-display
-        public int basemipsize { get; set; }
-        public int sd_width { get; set; }
-        public int sd_height { get; set; }
+        public int basemipsize;
+        public int sd_width;
+        public int sd_height;
+        public int aspect;
         
 
         public abstract bool Read(out string output, out int errorrow, out int errorcol);
