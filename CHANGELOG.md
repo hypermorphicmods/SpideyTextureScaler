@@ -1,5 +1,13 @@
 ﻿# Change Log
 
+## 1.2.1
+
+### Added
+- Automatic switch from .hd.texture to .texture
+
+### Fixed
+- Bugs in .hd file location code
+
 ## 1.2
 
 ### Added
