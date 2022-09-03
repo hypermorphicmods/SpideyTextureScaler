@@ -1,5 +1,13 @@
 ﻿# Change Log
 
+## 1.2.2
+
+### Added
+- Size check on hd file to help reduce user errors
+
+### Fixed
+- More bugfixes for hd filename process (argh)
+
 ## 1.2.1
 
 ### Added

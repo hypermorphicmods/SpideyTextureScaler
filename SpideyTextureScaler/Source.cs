@@ -109,7 +109,7 @@ namespace SpideyTextureScaler
                 if (HDMipmaps != br.ReadByte())
                 {
                     output += "HDMipmap count discrepancy\r\n";
-                    errorcol = 4;
+                    errorcol = 5;
                     return false;
                 }
 
@@ -122,16 +122,30 @@ namespace SpideyTextureScaler
                 string hdtxt;
                 if (File.Exists(hdfilename))
                     hdtxt = "hd part found";
-                else if (File.Exists(Filename.Replace(".hd.texture", "_hd.texture")))
+                else if (File.Exists(hdfilename.Replace(".hd.texture", "_hd.texture")))
                 {
-                    hdfilename = Filename.Replace(".hd.texture", "_hd.texture");
+                    hdfilename = hdfilename.Replace(".hd.texture", "_hd.texture");
                     hdtxt = "found SpiderTex style _hd file";
                 }
                 else
+                {
                     hdtxt = "hd part MISSING";
+                    hdfilename = "";
+                }
                 var arraytxt = Images > 1 ? $"with {Images} packed textures " : "";
                 output += $"Source {arraytxt}loaded ({hdtxt})\r\n";
-  
+
+                if (hdfilename != "")
+                {
+                    var hdfilesize = new FileInfo(hdfilename).Length;
+                    if (hdfilesize != HDSize)
+                    {
+                        output += $"HD component is the wrong size (expected {HDSize} bytes, got {hdfilesize})\r\n";
+                        errorcol = 8;
+                        return false;
+                    }
+                }
+
                 Ready = errorcol == -1;
                 return true;
             }

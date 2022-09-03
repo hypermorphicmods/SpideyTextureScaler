@@ -91,7 +91,7 @@ namespace SpideyTextureScaler
             savedds.Height = tex.Height;
             if (tex.HDSize > 0)
             {
-                if (!File.Exists(tex.hdfilename))
+                if (tex.hdfilename == "" || !File.Exists(tex.hdfilename))
                 {
                     if (MessageBox.Show($"No corresponding .hd.texture file found.\r\n\r\nDo you want to proceed with the low resolution texture ({tex.sd_width} x {tex.sd_height})?",
                     "Alert",
