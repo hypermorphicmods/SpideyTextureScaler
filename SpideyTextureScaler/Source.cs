@@ -118,25 +118,20 @@ namespace SpideyTextureScaler
                 for (int i = 0; i < Images; i++)
                     mipmaps.Add(br.ReadBytes((int)(Size / Images)));
 
-                var arraytxt = Images > 1 ? $"with {Images} packed textures " : "";
-                if (HDSize == 0)
+                hdfilename = Path.ChangeExtension(Filename, ".hd.texture");
+                string hdtxt;
+                if (File.Exists(hdfilename))
+                    hdtxt = "hd part found";
+                else if (File.Exists(Filename.Replace(".hd.texture", "_hd.texture")))
                 {
-                    hdfilename = "";
-                    output += $"Source {arraytxt}loaded (single part texture)\r\n";
+                    hdfilename = Filename.Replace(".hd.texture", "_hd.texture");
+                    hdtxt = "found SpiderTex style _hd file";
                 }
                 else
-                {
-                    hdfilename = Path.ChangeExtension(Filename, ".hd.texture");
-                    if (File.Exists(hdfilename))
-                        output += $"Source {arraytxt}loaded (hd part found)\r\n";
-                    else if (File.Exists(Filename.Replace(".texture", "_hd.texture")))
-                    {
-                        hdfilename = hdfilename.Replace(".texture", "_hd.texture");
-                        output += $"Source {arraytxt}loaded (found SpiderTex style _hd file)\r\n";
-                    }
-                    else
-                        output += $"Source {arraytxt}loaded (hd part MISSING)\r\n";
-                }
+                    hdtxt = "hd part MISSING";
+                var arraytxt = Images > 1 ? $"with {Images} packed textures " : "";
+                output += $"Source {arraytxt}loaded ({hdtxt})\r\n";
+  
                 Ready = errorcol == -1;
                 return true;
             }

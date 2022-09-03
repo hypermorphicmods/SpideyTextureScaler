@@ -49,7 +49,12 @@ namespace SpideyTextureScaler
                 program.texturestats[0] = obj = new Source();
 
                 obj.Filename = f.FileName;
-
+                if (obj.Filename.ToLower().EndsWith(".hd.texture") || obj.Filename.ToLower().EndsWith("_hd.texture"))
+                {
+                    var h = obj.Filename.Substring(0, obj.Filename.Length - ".hd.texture".Length) + ".texture";
+                    if (File.Exists(h))
+                        obj.Filename = h;
+                }
                 if (obj.Read(out output, out errorrow, out errorcol))
                 {
                     saveddsbutton.Enabled = true;
