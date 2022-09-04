@@ -12,7 +12,7 @@ namespace SpideyTextureScaler
 
         public DDS()
         {
-            Name = "DDS";
+            Name = "Modded";
         }
 
         public override bool Read(out string output, out int errorrow, out int errorcol)

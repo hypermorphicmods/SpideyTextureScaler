@@ -37,6 +37,17 @@
             this.outputbutton = new System.Windows.Forms.Button();
             this.generatebutton = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.readyDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.widthDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.heightDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.mipmapsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.hDMipmapsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Images = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BytesPerPixel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sizeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.hDSizeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.formatDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.texturestatsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.statusgroup = new System.Windows.Forms.GroupBox();
             this.outputbox = new System.Windows.Forms.TextBox();
@@ -50,17 +61,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.ignoreformat = new System.Windows.Forms.CheckBox();
-            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.readyDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.widthDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.heightDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.mipmapsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.hDMipmapsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Images = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.BytesPerPixel = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sizeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.hDSizeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.formatDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.texturestatsBindingSource)).BeginInit();
@@ -76,7 +76,7 @@
             this.sourcebutton.Name = "sourcebutton";
             this.sourcebutton.Size = new System.Drawing.Size(272, 48);
             this.sourcebutton.TabIndex = 0;
-            this.sourcebutton.Text = "Import extracted .texture";
+            this.sourcebutton.Text = "Import original .texture";
             this.sourcebutton.UseVisualStyleBackColor = true;
             this.sourcebutton.Click += new System.EventHandler(this.sourcebutton_Click);
             // 
@@ -90,7 +90,7 @@
             this.ddsbutton.Name = "ddsbutton";
             this.ddsbutton.Size = new System.Drawing.Size(272, 48);
             this.ddsbutton.TabIndex = 2;
-            this.ddsbutton.Text = "Choose .dds texture";
+            this.ddsbutton.Text = "Choose modded .dds texture";
             this.ddsbutton.UseVisualStyleBackColor = true;
             this.ddsbutton.Click += new System.EventHandler(this.ddsbutton_Click);
             // 
@@ -100,7 +100,7 @@
             this.outputbutton.Name = "outputbutton";
             this.outputbutton.Size = new System.Drawing.Size(272, 48);
             this.outputbutton.TabIndex = 4;
-            this.outputbutton.Text = "Choose output .texture";
+            this.outputbutton.Text = "Choose output filename";
             this.outputbutton.UseVisualStyleBackColor = true;
             this.outputbutton.Click += new System.EventHandler(this.outputbutton_Click);
             // 
@@ -156,6 +156,105 @@
             this.dataGridView1.ShowEditingIcon = false;
             this.dataGridView1.Size = new System.Drawing.Size(1440, 192);
             this.dataGridView1.TabIndex = 7;
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
+            this.nameDataGridViewTextBoxColumn.HeaderText = "";
+            this.nameDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            this.nameDataGridViewTextBoxColumn.ReadOnly = true;
+            this.nameDataGridViewTextBoxColumn.Width = 33;
+            // 
+            // readyDataGridViewCheckBoxColumn
+            // 
+            this.readyDataGridViewCheckBoxColumn.DataPropertyName = "Ready";
+            this.readyDataGridViewCheckBoxColumn.HeaderText = "Ready";
+            this.readyDataGridViewCheckBoxColumn.MinimumWidth = 9;
+            this.readyDataGridViewCheckBoxColumn.Name = "readyDataGridViewCheckBoxColumn";
+            this.readyDataGridViewCheckBoxColumn.ReadOnly = true;
+            this.readyDataGridViewCheckBoxColumn.Width = 75;
+            // 
+            // widthDataGridViewTextBoxColumn
+            // 
+            this.widthDataGridViewTextBoxColumn.DataPropertyName = "Width";
+            this.widthDataGridViewTextBoxColumn.HeaderText = "Width";
+            this.widthDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.widthDataGridViewTextBoxColumn.Name = "widthDataGridViewTextBoxColumn";
+            this.widthDataGridViewTextBoxColumn.ReadOnly = true;
+            this.widthDataGridViewTextBoxColumn.Width = 110;
+            // 
+            // heightDataGridViewTextBoxColumn
+            // 
+            this.heightDataGridViewTextBoxColumn.DataPropertyName = "Height";
+            this.heightDataGridViewTextBoxColumn.HeaderText = "Height";
+            this.heightDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.heightDataGridViewTextBoxColumn.Name = "heightDataGridViewTextBoxColumn";
+            this.heightDataGridViewTextBoxColumn.ReadOnly = true;
+            this.heightDataGridViewTextBoxColumn.Width = 116;
+            // 
+            // mipmapsDataGridViewTextBoxColumn
+            // 
+            this.mipmapsDataGridViewTextBoxColumn.DataPropertyName = "Mipmaps";
+            this.mipmapsDataGridViewTextBoxColumn.HeaderText = "Mipmaps";
+            this.mipmapsDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.mipmapsDataGridViewTextBoxColumn.Name = "mipmapsDataGridViewTextBoxColumn";
+            this.mipmapsDataGridViewTextBoxColumn.ReadOnly = true;
+            this.mipmapsDataGridViewTextBoxColumn.Width = 140;
+            // 
+            // hDMipmapsDataGridViewTextBoxColumn
+            // 
+            this.hDMipmapsDataGridViewTextBoxColumn.DataPropertyName = "HDMipmaps";
+            this.hDMipmapsDataGridViewTextBoxColumn.HeaderText = "HDMipmaps";
+            this.hDMipmapsDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.hDMipmapsDataGridViewTextBoxColumn.Name = "hDMipmapsDataGridViewTextBoxColumn";
+            this.hDMipmapsDataGridViewTextBoxColumn.ReadOnly = true;
+            this.hDMipmapsDataGridViewTextBoxColumn.Width = 170;
+            // 
+            // Images
+            // 
+            this.Images.DataPropertyName = "Images";
+            this.Images.HeaderText = "Images";
+            this.Images.MinimumWidth = 9;
+            this.Images.Name = "Images";
+            this.Images.ReadOnly = true;
+            this.Images.Width = 121;
+            // 
+            // BytesPerPixel
+            // 
+            this.BytesPerPixel.DataPropertyName = "BytesPerPixel";
+            this.BytesPerPixel.HeaderText = "BytesPerPixel";
+            this.BytesPerPixel.MinimumWidth = 9;
+            this.BytesPerPixel.Name = "BytesPerPixel";
+            this.BytesPerPixel.ReadOnly = true;
+            this.BytesPerPixel.Width = 175;
+            // 
+            // sizeDataGridViewTextBoxColumn
+            // 
+            this.sizeDataGridViewTextBoxColumn.DataPropertyName = "Size";
+            this.sizeDataGridViewTextBoxColumn.HeaderText = "Size";
+            this.sizeDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.sizeDataGridViewTextBoxColumn.Name = "sizeDataGridViewTextBoxColumn";
+            this.sizeDataGridViewTextBoxColumn.ReadOnly = true;
+            this.sizeDataGridViewTextBoxColumn.Width = 91;
+            // 
+            // hDSizeDataGridViewTextBoxColumn
+            // 
+            this.hDSizeDataGridViewTextBoxColumn.DataPropertyName = "HDSize";
+            this.hDSizeDataGridViewTextBoxColumn.HeaderText = "HDSize";
+            this.hDSizeDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.hDSizeDataGridViewTextBoxColumn.Name = "hDSizeDataGridViewTextBoxColumn";
+            this.hDSizeDataGridViewTextBoxColumn.ReadOnly = true;
+            this.hDSizeDataGridViewTextBoxColumn.Width = 121;
+            // 
+            // formatDataGridViewTextBoxColumn
+            // 
+            this.formatDataGridViewTextBoxColumn.DataPropertyName = "Format";
+            this.formatDataGridViewTextBoxColumn.HeaderText = "Format";
+            this.formatDataGridViewTextBoxColumn.MinimumWidth = 9;
+            this.formatDataGridViewTextBoxColumn.Name = "formatDataGridViewTextBoxColumn";
+            this.formatDataGridViewTextBoxColumn.ReadOnly = true;
+            this.formatDataGridViewTextBoxColumn.Width = 119;
             // 
             // texturestatsBindingSource
             // 
@@ -249,7 +348,7 @@
             this.groupBox1.Size = new System.Drawing.Size(1440, 168);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Game resources";
+            this.groupBox1.Text = "Unmodified Source";
             // 
             // ddsfilenamelabel
             // 
@@ -270,7 +369,7 @@
             this.groupBox2.Size = new System.Drawing.Size(1440, 120);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Modded texture";
+            this.groupBox2.Text = "Modified texture";
             // 
             // groupBox3
             // 
@@ -287,7 +386,7 @@
             this.groupBox3.Size = new System.Drawing.Size(1440, 336);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Output";
+            this.groupBox3.Text = "Modified Output";
             // 
             // ignoreformat
             // 
@@ -299,105 +398,6 @@
             this.ignoreformat.Text = "Ignore Format difference";
             this.ignoreformat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.ignoreformat.UseVisualStyleBackColor = true;
-            // 
-            // nameDataGridViewTextBoxColumn
-            // 
-            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
-            this.nameDataGridViewTextBoxColumn.HeaderText = "";
-            this.nameDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
-            this.nameDataGridViewTextBoxColumn.ReadOnly = true;
-            this.nameDataGridViewTextBoxColumn.Width = 9;
-            // 
-            // readyDataGridViewCheckBoxColumn
-            // 
-            this.readyDataGridViewCheckBoxColumn.DataPropertyName = "Ready";
-            this.readyDataGridViewCheckBoxColumn.HeaderText = "Ready";
-            this.readyDataGridViewCheckBoxColumn.MinimumWidth = 9;
-            this.readyDataGridViewCheckBoxColumn.Name = "readyDataGridViewCheckBoxColumn";
-            this.readyDataGridViewCheckBoxColumn.ReadOnly = true;
-            this.readyDataGridViewCheckBoxColumn.Width = 75;
-            // 
-            // widthDataGridViewTextBoxColumn
-            // 
-            this.widthDataGridViewTextBoxColumn.DataPropertyName = "Width";
-            this.widthDataGridViewTextBoxColumn.HeaderText = "Width";
-            this.widthDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.widthDataGridViewTextBoxColumn.Name = "widthDataGridViewTextBoxColumn";
-            this.widthDataGridViewTextBoxColumn.ReadOnly = true;
-            this.widthDataGridViewTextBoxColumn.Width = 110;
-            // 
-            // heightDataGridViewTextBoxColumn
-            // 
-            this.heightDataGridViewTextBoxColumn.DataPropertyName = "Height";
-            this.heightDataGridViewTextBoxColumn.HeaderText = "Height";
-            this.heightDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.heightDataGridViewTextBoxColumn.Name = "heightDataGridViewTextBoxColumn";
-            this.heightDataGridViewTextBoxColumn.ReadOnly = true;
-            this.heightDataGridViewTextBoxColumn.Width = 116;
-            // 
-            // mipmapsDataGridViewTextBoxColumn
-            // 
-            this.mipmapsDataGridViewTextBoxColumn.DataPropertyName = "Mipmaps";
-            this.mipmapsDataGridViewTextBoxColumn.HeaderText = "Mipmaps";
-            this.mipmapsDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.mipmapsDataGridViewTextBoxColumn.Name = "mipmapsDataGridViewTextBoxColumn";
-            this.mipmapsDataGridViewTextBoxColumn.ReadOnly = true;
-            this.mipmapsDataGridViewTextBoxColumn.Width = 140;
-            // 
-            // hDMipmapsDataGridViewTextBoxColumn
-            // 
-            this.hDMipmapsDataGridViewTextBoxColumn.DataPropertyName = "HDMipmaps";
-            this.hDMipmapsDataGridViewTextBoxColumn.HeaderText = "HDMipmaps";
-            this.hDMipmapsDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.hDMipmapsDataGridViewTextBoxColumn.Name = "hDMipmapsDataGridViewTextBoxColumn";
-            this.hDMipmapsDataGridViewTextBoxColumn.ReadOnly = true;
-            this.hDMipmapsDataGridViewTextBoxColumn.Width = 170;
-            // 
-            // Images
-            // 
-            this.Images.DataPropertyName = "Images";
-            this.Images.HeaderText = "Images";
-            this.Images.MinimumWidth = 9;
-            this.Images.Name = "Images";
-            this.Images.ReadOnly = true;
-            this.Images.Width = 121;
-            // 
-            // BytesPerPixel
-            // 
-            this.BytesPerPixel.DataPropertyName = "BytesPerPixel";
-            this.BytesPerPixel.HeaderText = "BytesPerPixel";
-            this.BytesPerPixel.MinimumWidth = 9;
-            this.BytesPerPixel.Name = "BytesPerPixel";
-            this.BytesPerPixel.ReadOnly = true;
-            this.BytesPerPixel.Width = 175;
-            // 
-            // sizeDataGridViewTextBoxColumn
-            // 
-            this.sizeDataGridViewTextBoxColumn.DataPropertyName = "Size";
-            this.sizeDataGridViewTextBoxColumn.HeaderText = "Size";
-            this.sizeDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.sizeDataGridViewTextBoxColumn.Name = "sizeDataGridViewTextBoxColumn";
-            this.sizeDataGridViewTextBoxColumn.ReadOnly = true;
-            this.sizeDataGridViewTextBoxColumn.Width = 91;
-            // 
-            // hDSizeDataGridViewTextBoxColumn
-            // 
-            this.hDSizeDataGridViewTextBoxColumn.DataPropertyName = "HDSize";
-            this.hDSizeDataGridViewTextBoxColumn.HeaderText = "HDSize";
-            this.hDSizeDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.hDSizeDataGridViewTextBoxColumn.Name = "hDSizeDataGridViewTextBoxColumn";
-            this.hDSizeDataGridViewTextBoxColumn.ReadOnly = true;
-            this.hDSizeDataGridViewTextBoxColumn.Width = 121;
-            // 
-            // formatDataGridViewTextBoxColumn
-            // 
-            this.formatDataGridViewTextBoxColumn.DataPropertyName = "Format";
-            this.formatDataGridViewTextBoxColumn.HeaderText = "Format";
-            this.formatDataGridViewTextBoxColumn.MinimumWidth = 9;
-            this.formatDataGridViewTextBoxColumn.Name = "formatDataGridViewTextBoxColumn";
-            this.formatDataGridViewTextBoxColumn.ReadOnly = true;
-            this.formatDataGridViewTextBoxColumn.Width = 119;
             // 
             // Form1
             // 

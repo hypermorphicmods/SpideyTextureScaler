@@ -34,7 +34,7 @@ namespace SpideyTextureScaler
         private void sourcebutton_Click(object sender, EventArgs e)
         {
             var f = new OpenFileDialog();
-            f.Filter = "Low res extracted texture|*.texture";
+            f.Filter = "Low or high res texture|*.texture";
             var obj = (Source)program.texturestats[0];
             obj.ResetVisible();
             ClearErrorRow(dataGridView1.Rows[0]);
@@ -133,6 +133,18 @@ namespace SpideyTextureScaler
                 obj.Filename = f.FileName;
                 obj.Read(out output, out errorrow, out errorcol);
                 obj.Images = 1;
+                if (program.texturestats[2].Filename == Output.defaultfilelabel)
+                {
+                    var suggestfn = Path.ChangeExtension(f.FileName, ".texture");
+                    if (suggestfn != program.texturestats[0].Filename)
+                    {
+                        program.texturestats[2].Filename = suggestfn;
+                        program.texturestats[2].Ready = true;
+                        outputlabel.DataBindings.Clear();
+                        outputlabel.DataBindings.Add("Text", program.texturestats[2], nameof(TextureBase.Filename));
+                    }
+                }
+                
                 if (obj.Filename.ToLower().EndsWith(".a0.dds"))
                 {
                     var stub = obj.Filename.Substring(0, obj.Filename.Length - ".a0.dds".Length);

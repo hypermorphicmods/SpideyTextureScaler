@@ -44,7 +44,8 @@ namespace SpideyTextureScaler
         public int sd_width;
         public int sd_height;
         public int aspect;
-        
+
+        public const string defaultfilelabel = "Choose a file...";
 
         public abstract bool Read(out string output, out int errorrow, out int errorcol);
         public void ResetVisible()
@@ -58,7 +59,7 @@ namespace SpideyTextureScaler
             HDSize = null;
             Format = null;
             Ready = false;
-            Filename = "Choose a file...";
+            Filename = defaultfilelabel;
         }
     }
 }

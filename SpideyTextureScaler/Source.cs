@@ -16,7 +16,7 @@ namespace SpideyTextureScaler
 
         public Source()
         {
-            Name = "Extracted";
+            Name = "Source";
         }
 
         public override bool Read(out string output, out int errorrow, out int errorcol)
