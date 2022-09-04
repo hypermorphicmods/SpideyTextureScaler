@@ -86,7 +86,7 @@ namespace SpideyTextureScaler
                 {
                     string o2;
                     ret |= WriteSingle(
-                        hdmipmaps.Skip(i * hdmipmaps.Length / (int)Images).Take(hdmipmaps.Length / (int)Images).ToArray(),
+                        hdmipmaps is null ? null : hdmipmaps.Skip(i * hdmipmaps.Length / (int)Images).Take(hdmipmaps.Length / (int)Images).ToArray(),
                         mipmaps[i],
                         i, out o2);
                     output += o2;
