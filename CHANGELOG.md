@@ -1,5 +1,19 @@
 ﻿# Change Log
 
+## 1.2.3
+
+### Added
+- Add command line interface
+- Version number display in title
+- Auto-suggest output filename
+
+### Change
+- Rename of various UI components for better clarity
+
+### Fixed
+- Bug: Crash when extracting array without hd component
+
+
 ## 1.2.2
 
 ### Added
