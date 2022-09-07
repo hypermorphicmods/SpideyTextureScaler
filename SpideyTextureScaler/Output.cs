@@ -23,7 +23,7 @@ namespace SpideyTextureScaler
             return true;
         }
 
-        internal void Generate(Source tex, List<DDS> ddss, bool testmode, bool ignoreformat, out string output, out int errorrow, out int errorcol)
+        internal void Generate(Source tex, List<DDS> ddss, bool testmode, bool? ignoreformat, out string output, out int errorrow, out int errorcol)
         {
             output = "";
             errorrow = 0;
@@ -55,16 +55,34 @@ namespace SpideyTextureScaler
                 return;
             }
 
-            if (!ignoreformat && tex.Format != dds.Format)
+            if (tex.Format != dds.Format)
             {
-                if (MessageBox.Show("Files have different DXGI formats.\r\n\r\nAre you sure you want to continue?",
-                    "DXGI format mismatch", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                switch (ignoreformat)
                 {
-                    output += "Canceled due to DDS format mismatch.\r\n";
-                    errorrow = 1;
-                    errorcol = 10;
-                    return;
+                    case null:
+                        // GUI only
+                        if (MessageBox.Show("Files have different DXGI formats.\r\n\r\nAre you sure you want to continue?",
+                            "DXGI format mismatch", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                        {
+                            output += "Canceled due to DDS format mismatch.\r\n";
+                            errorrow = 1;
+                            errorcol = 10;
+                            return;
+                        }
+                        break;
+
+                    case true:
+                        // command line or GUI
+                        break;
+
+                    case false:
+                        // command line only
+                        errorcol = 99;
+                        output += $"DDS format mismatch: {tex.Format} != {dds.Format}";
+                        return;
                 }
+
+
             }
 
             if (ddss.Count > 1)

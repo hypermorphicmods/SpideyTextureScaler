@@ -242,7 +242,7 @@ namespace SpideyTextureScaler
                 (Source)(program.texturestats[0]),
                 ddss, 
                 testmode.Checked, 
-                ignoreformat.Checked,
+                ignoreformat.Checked ? true : null,
                 out output, out errorrow, out errorcol);
 
             outputbox.AppendText(output);
