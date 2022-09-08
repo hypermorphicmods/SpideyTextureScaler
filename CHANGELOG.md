@@ -1,5 +1,11 @@
 ﻿# Change Log
 
+# 1.3
+
+## Added
+- Option to increase base texture resolution (GUI and command line)
+- Directories for each type of input are remembered throughout the session
+
 ## 1.2.3
 
 ### Added
