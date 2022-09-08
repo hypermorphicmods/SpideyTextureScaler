@@ -68,7 +68,9 @@ namespace SpideyTextureScaler
 
                 // calculate based on remaining data
                 Size = (uint)(fs.Length - fs.Position);
-                BytesPerPixel = Math.Pow(2, Math.Floor(Math.Log((double)Size) / Math.Log(2))) / Width / Height;
+                int maxmipexp = (int)Math.Floor(Math.Log((double)Size) / Math.Log(2));
+                basemipsize = 1 << maxmipexp;
+                BytesPerPixel = basemipsize / Width / Height;
 
                 output += $"DDS loaded\r\n";
                 Ready = true;

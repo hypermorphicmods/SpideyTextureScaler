@@ -5,6 +5,7 @@ namespace SpideyTextureScaler
     public partial class Form1 : Form
     {
         Program program;
+        string lastsourcedir, lastddsdir, lastoutputdir;
 
         public Form1(Program p)
         {
@@ -21,7 +22,7 @@ namespace SpideyTextureScaler
             this.Text = $"SpideyTextureScaler v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
         }
 
-        private void UpdateGenerateButton()
+        private void UpdateControls()
         {
             if (program.texturestats[0].Ready && program.texturestats[0].Images > 0 && program.texturestats[1].Ready && 
                 program.texturestats[1].Images < program.texturestats[0].Images)
@@ -30,12 +31,30 @@ namespace SpideyTextureScaler
                 MarkError(1, 6);
             }
             generatebutton.Enabled = program.texturestats[0].Ready && program.texturestats[1].Ready && program.texturestats[2].Ready;
+
+            if (program.texturestats[0].Ready && program.texturestats[1].Ready && program.texturestats[0].HDSize > 0)
+            {
+                var scale = (int)(Math.Floor(Math.Log((float)program.texturestats[1].basemipsize / (float)program.texturestats[0].basemipsize) / Math.Log(2.0f)) / 2.0f);
+                extrasdctl.Maximum = scale;
+                extrasdctl.Minimum = 0;
+                extrasdctl.Enabled = true;
+                extrasdctl_ValueChanged(null, null);
+            }
+            else
+                extrasdctl.Enabled = false;
+        }
+
+        private void extrasdctl_ValueChanged(object sender, EventArgs e)
+        {
+            hdlabel.Text = $"({extrasdctl.Maximum - extrasdctl.Value} HD)";
         }
 
         private void sourcebutton_Click(object sender, EventArgs e)
         {
             var f = new OpenFileDialog();
             f.Filter = "Low or high res texture|*.texture";
+            if (lastsourcedir is not null)
+                f.InitialDirectory = lastsourcedir;
             var obj = (Source)program.texturestats[0];
             obj.ResetVisible();
             ClearErrorRow(dataGridView1.Rows[0]);
@@ -50,6 +69,7 @@ namespace SpideyTextureScaler
                 program.texturestats[0] = obj = new Source();
 
                 obj.Filename = f.FileName;
+                lastsourcedir = Path.GetDirectoryName(f.FileName) + @"\";
                 if (obj.Filename.ToLower().EndsWith(".hd.texture") || obj.Filename.ToLower().EndsWith("_hd.texture"))
                 {
                     var h = obj.Filename.Substring(0, obj.Filename.Length - ".hd.texture".Length) + ".texture";
@@ -72,7 +92,7 @@ namespace SpideyTextureScaler
             sourcelabel.DataBindings.Clear();
             sourcelabel.DataBindings.Add("Text", obj, nameof(TextureBase.Filename));
             MarkError(errorrow, errorcol);
-            UpdateGenerateButton();
+            UpdateControls();
         }
 
         private void saveddsbutton_Click(object sender, EventArgs e)
@@ -120,6 +140,8 @@ namespace SpideyTextureScaler
         {
             var f = new OpenFileDialog();
             f.Filter = program.texturestats[0].Images > 1  ? "DirectDraw Surface Array (*.A0.dds)|*.A0.dds" : "DirectDraw Surface (*.dds)|*.dds";
+            if (lastddsdir is not null)
+                f.InitialDirectory = lastddsdir;
             var obj = (DDS)program.texturestats[1];
             obj.ResetVisible();
             ClearErrorRow(dataGridView1.Rows[1]);
@@ -132,6 +154,7 @@ namespace SpideyTextureScaler
                 program.texturestats[1] = obj = new DDS();
 
                 obj.Filename = f.FileName;
+                lastddsdir = Path.GetDirectoryName(f.FileName) + @"\";
                 obj.Read(out output, out errorrow, out errorcol);
                 obj.Images = 1;
                 if (program.texturestats[2].Filename == Output.defaultfilelabel)
@@ -164,18 +187,21 @@ namespace SpideyTextureScaler
             ddslabel.DataBindings.Clear();
             ddslabel.DataBindings.Add("Text", obj, nameof(TextureBase.Filename));
             MarkError(errorrow, errorcol);
-            UpdateGenerateButton();
+            UpdateControls();
         }
 
         private void outputbutton_Click(object sender, EventArgs e)
         {
             var f = new SaveFileDialog();
             f.Filter = "Modified texture|*.texture";
+            if (lastoutputdir is not null)
+                f.InitialDirectory = Path.GetDirectoryName(lastoutputdir);
             var obj = (Output)program.texturestats[2];
             obj.ResetVisible();
 
             if (f.ShowDialog() == DialogResult.OK)
             {
+                lastoutputdir = Path.GetDirectoryName(f.FileName) + @"\";
                 program.texturestats[2] = obj = new Output();
                 if (obj.Filename != program.texturestats[0].Filename)
                 {
@@ -192,7 +218,7 @@ namespace SpideyTextureScaler
             dataGridView1.AutoResizeColumns();
             outputlabel.DataBindings.Clear();
             outputlabel.DataBindings.Add("Text", obj, nameof(TextureBase.Filename));
-            UpdateGenerateButton();
+            UpdateControls();
         }
 
         private void generatebutton_Click(object sender, EventArgs e)
@@ -219,7 +245,7 @@ namespace SpideyTextureScaler
                 outputbox.Text += output;
             }
 
-            UpdateGenerateButton();
+            UpdateControls();
             dataGridView1.Refresh();
             if (!generatebutton.Enabled)
                 return;
@@ -243,6 +269,7 @@ namespace SpideyTextureScaler
                 ddss, 
                 testmode.Checked, 
                 ignoreformat.Checked ? true : null,
+                (uint)extrasdctl.Value,
                 out output, out errorrow, out errorcol);
 
             outputbox.AppendText(output);

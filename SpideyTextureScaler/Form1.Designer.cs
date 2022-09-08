@@ -60,6 +60,9 @@
             this.ddsfilenamelabel = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.hdlabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.extrasdctl = new System.Windows.Forms.NumericUpDown();
             this.ignoreformat = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -68,6 +71,7 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.extrasdctl)).BeginInit();
             this.SuspendLayout();
             // 
             // sourcebutton
@@ -109,7 +113,7 @@
             this.generatebutton.Enabled = false;
             this.generatebutton.Location = new System.Drawing.Point(88, 112);
             this.generatebutton.Name = "generatebutton";
-            this.generatebutton.Size = new System.Drawing.Size(208, 80);
+            this.generatebutton.Size = new System.Drawing.Size(208, 72);
             this.generatebutton.TabIndex = 6;
             this.generatebutton.Text = "Generate";
             this.generatebutton.UseVisualStyleBackColor = true;
@@ -316,7 +320,7 @@
             // testmode
             // 
             this.testmode.AutoSize = true;
-            this.testmode.Location = new System.Drawing.Point(24, 224);
+            this.testmode.Location = new System.Drawing.Point(24, 200);
             this.testmode.Name = "testmode";
             this.testmode.Size = new System.Drawing.Size(337, 34);
             this.testmode.TabIndex = 10;
@@ -375,6 +379,9 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.hdlabel);
+            this.groupBox3.Controls.Add(this.label1);
+            this.groupBox3.Controls.Add(this.extrasdctl);
             this.groupBox3.Controls.Add(this.ignoreformat);
             this.groupBox3.Controls.Add(this.testmode);
             this.groupBox3.Controls.Add(this.outputlabel);
@@ -388,10 +395,42 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Modified Output";
             // 
+            // hdlabel
+            // 
+            this.hdlabel.AutoSize = true;
+            this.hdlabel.Location = new System.Drawing.Point(266, 288);
+            this.hdlabel.Name = "hdlabel";
+            this.hdlabel.Size = new System.Drawing.Size(72, 30);
+            this.hdlabel.TabIndex = 13;
+            this.hdlabel.Text = "(0 HD)";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 288);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(174, 30);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Add SD mipmaps";
+            // 
+            // extrasdctl
+            // 
+            this.extrasdctl.Enabled = false;
+            this.extrasdctl.Location = new System.Drawing.Point(204, 288);
+            this.extrasdctl.Maximum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.extrasdctl.Name = "extrasdctl";
+            this.extrasdctl.Size = new System.Drawing.Size(56, 35);
+            this.extrasdctl.TabIndex = 11;
+            this.extrasdctl.ValueChanged += new System.EventHandler(this.extrasdctl_ValueChanged);
+            // 
             // ignoreformat
             // 
             this.ignoreformat.AutoSize = true;
-            this.ignoreformat.Location = new System.Drawing.Point(24, 263);
+            this.ignoreformat.Location = new System.Drawing.Point(24, 240);
             this.ignoreformat.Name = "ignoreformat";
             this.ignoreformat.Size = new System.Drawing.Size(269, 34);
             this.ignoreformat.TabIndex = 10;
@@ -423,6 +462,7 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.extrasdctl)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -459,5 +499,8 @@
         private DataGridViewTextBoxColumn sizeDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn hDSizeDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn formatDataGridViewTextBoxColumn;
+        private Label hdlabel;
+        private Label label1;
+        private NumericUpDown extrasdctl;
     }
 }

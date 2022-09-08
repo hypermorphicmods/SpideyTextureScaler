@@ -23,7 +23,7 @@ namespace SpideyTextureScaler
             return true;
         }
 
-        internal void Generate(Source tex, List<DDS> ddss, bool testmode, bool? ignoreformat, out string output, out int errorrow, out int errorcol)
+        internal void Generate(Source tex, List<DDS> ddss, bool testmode, bool? ignoreformat, uint extrasd, out string output, out int errorrow, out int errorcol)
         {
             output = "";
             errorrow = 0;
@@ -81,8 +81,6 @@ namespace SpideyTextureScaler
                         output += $"DDS format mismatch: {tex.Format} != {dds.Format}";
                         return;
                 }
-
-
             }
 
             if (ddss.Count > 1)
@@ -120,24 +118,33 @@ namespace SpideyTextureScaler
 
             uint extrasdmipmaps = (uint)(Math.Log((uint)dds.Width / tex.sd_width) / Math.Log(2));
             uint sizeincrease = 0;
-            for (int i = (int)extrasdmipmaps; i > 0; i--)
+
+            // HD mips
+            if (tex.HDSize > 0 && extrasd > HDMipmaps)
+                throw new ArgumentOutOfRangeException("Unchecked extrasd value");
+            for (int i = (int)extrasdmipmaps; i > extrasd; i--)
                 sizeincrease += (uint)(tex.basemipsize << (2 * i));
 
             if (tex.HDSize > 0)
             {
-                HDMipmaps = extrasdmipmaps;
-                extrasdmipmaps = 0;
+                HDMipmaps = extrasdmipmaps - extrasd;
+                extrasdmipmaps = extrasd;
                 HDSize = sizeincrease * Images;
+                sizeincrease = 0;
             }
             else
             {
-                HDMipmaps = 0;
                 HDSize = 0;
-                Size += sizeincrease * Images;
-                extrasdmipsize = sizeincrease;
-                sd_width <<= (int)extrasdmipmaps;
-                sd_height <<= (int)extrasdmipmaps;
+                HDMipmaps = 0;
             }
+
+            // extra SD
+            for (int i = (int)extrasdmipmaps; i > 0; i--)
+                sizeincrease += (uint)(tex.basemipsize << (2 * i));
+
+            extrasdmipsize = sizeincrease * (uint)Images;
+            sd_width <<= (int)extrasdmipmaps;
+            sd_height <<= (int)extrasdmipmaps;
 
             for (int i = 0; i < ddss.Count; i++)
             {
@@ -169,19 +176,27 @@ namespace SpideyTextureScaler
                 }
             }
 
-            if (HDMipmaps > 0)
+            if (tex.HDSize > 0)
             {
                 string hdtexturefile = Path.ChangeExtension(Filename, "hd.texture");
                 using (var fs = File.Open(hdtexturefile, FileMode.Create))
                 using (var bw = new BinaryWriter(fs))
                 {
-                    for (int i = 0; i < ddss.Count; i++)
-                        bw.Write(hdmips[i]);
+                    if (HDMipmaps > 0)
+                        for (int i = 0; i < ddss.Count; i++)
+                            bw.Write(hdmips[i]);
+                    output += $"Wrote {hdtexturefile} ({fs.Position} bytes, max {Width}x{Height})\r\n";
                 }
-                output += $"Wrote {hdtexturefile} ({HDSize} bytes)\r\n";
             }
 
             Mipmaps += extrasdmipmaps;
+            Size += extrasdmipsize;
+            if (extrasdmipsize > 0)
+            {
+                BitConverter.GetBytes((uint)Size).CopyTo(tex.header, 0x8);
+                BitConverter.GetBytes((uint)Size).CopyTo(tex.header, 0x14);
+            }
+
             using (var fs = File.Open(Filename, FileMode.Create))
             using (var bw = new BinaryWriter(fs))
             {
@@ -208,7 +223,7 @@ namespace SpideyTextureScaler
                         bw.Write(sdmips[i]);
                 }
 
-                output += $"Wrote {Filename} ({fs.Position} bytes)\r\n";
+                output += $"Wrote {Filename} ({fs.Position} bytes, max {sd_width}x{sd_height})\r\n";
             }
 
             output += $"Finished ({DateTime.Now})\n";

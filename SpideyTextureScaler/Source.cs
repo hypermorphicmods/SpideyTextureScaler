@@ -120,7 +120,12 @@ namespace SpideyTextureScaler
 
                 hdfilename = Path.ChangeExtension(Filename, ".hd.texture");
                 string hdtxt;
-                if (File.Exists(hdfilename))
+                if (HDSize == 0)
+                {
+                    hdtxt = "single-part texture";
+                    hdfilename = "";
+                }
+                else if (File.Exists(hdfilename))
                     hdtxt = "hd part found";
                 else if (File.Exists(hdfilename.Replace(".hd.texture", "_hd.texture")))
                 {

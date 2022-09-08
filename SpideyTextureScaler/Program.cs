@@ -60,17 +60,20 @@ namespace SpideyTextureScaler
             ddsfile.AddValidator(result => { if (!result.GetValueForArgument(ddsfile).Exists) result.ErrorMessage = "DDS texture file not found"; });
             var ignoreformat = new Option<bool>("--ignoreformat", "Ignore DXGI format mismatches");
             var testmode = new Option<bool>("--testmode", "Replace only HD mipmaps");
+            var extrasd = new Option<uint>("--extrasd", "Maximum number of mipmaps to move from .hd.texture to .texture");
+            extrasd.SetDefaultValue(0);
             var replacecommand = new Command("replace", "Inject .dds texture into new .texture/.hd.texture files")
             {
                 source,
                 ddsfile,
+                extrasd,
                 ignoreformat,
                 testmode
             };
             rootcommand.AddCommand(replacecommand);
 
             extractcommand.SetHandler((source, outputdir, allowsd) => { Extract(source, outputdir, allowsd); }, source, outputdir, allowsd);
-            replacecommand.SetHandler((source, ddsfile, outputdir, ignoreformat, testmode) => { Replace(source, ddsfile, outputdir, ignoreformat, testmode); }, source, ddsfile, outputdir, ignoreformat, testmode);
+            replacecommand.SetHandler((source, ddsfile, outputdir, extrasd, ignoreformat, testmode) => { Replace(source, ddsfile, outputdir, extrasd, ignoreformat, testmode); }, source, ddsfile, outputdir, extrasd, ignoreformat, testmode);
             var ret = rootcommand.Invoke(args);
             FreeConsole();
             return ret;
@@ -148,7 +151,7 @@ namespace SpideyTextureScaler
             Console.WriteLine(output);
         }
 
-        private void Replace(FileInfo sourceInfo, FileInfo ddsInfo, DirectoryInfo? outputdirInfo, bool ignoreformat, bool testmode)
+        private void Replace(FileInfo sourceInfo, FileInfo ddsInfo, DirectoryInfo? outputdirInfo, uint extrasd, bool ignoreformat, bool testmode)
         {
             string outputdir;
             Console.WriteLine($"Extract {sourceInfo.FullName}");
@@ -187,11 +190,13 @@ namespace SpideyTextureScaler
             outobj.Filename = outputdir != "" ? Path.Combine(outputdir, Path.GetFileName(outobj.Filename)) : outobj.Filename;
             if (tex.Filename == outobj.Filename)
                 throw new Exception("Input and output .texture files cannot be the same.  Choose an output directory, or rename your .dds");
+            var scale = (uint)(Math.Floor(Math.Log((float)dds.basemipsize / (float)tex.basemipsize) / Math.Log(2.0f)) / 2.0f);
             outobj.Generate(
                 (Source)(texturestats[0]),
                 ddss,
                 testmode,
                 ignoreformat,
+                (uint)Math.Min(extrasd, scale),
                 out output, out errorrow, out errorcol);
 
             Console.WriteLine(output);
