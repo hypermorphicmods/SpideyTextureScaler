@@ -1,8 +1,13 @@
 ﻿# Change Log
 
-# 1.3
+## 1.3.1
 
-## Added
+### Fixed
+- Bugfix for BytesPerPixel calculation, causing it to be rounded down to a whole number
+
+## 1.3
+
+### Added
 - Option to increase base texture resolution (GUI and command line)
 - Directories for each type of input are remembered throughout the session
 
