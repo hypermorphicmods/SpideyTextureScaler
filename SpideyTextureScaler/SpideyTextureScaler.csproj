@@ -10,8 +10,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <ApplicationIcon>Icon1.ico</ApplicationIcon>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <FileVersion>1.3.1</FileVersion>
-    <AssemblyVersion>1.3.1</AssemblyVersion>
+    <FileVersion>1.3.2</FileVersion>
+    <AssemblyVersion>1.3.2</AssemblyVersion>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>

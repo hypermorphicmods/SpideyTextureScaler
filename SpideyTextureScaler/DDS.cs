@@ -80,16 +80,16 @@ namespace SpideyTextureScaler
 
         public bool Write(byte[] hdmipmaps, List<byte[]> mipmaps, out string output)
         {
-           if (Images > 1)
+           if (ArrayCount > 1)
             {
                 output = "";
                 bool ret = false;
-                for (int i = 0; i < Images; i++)
+                for (int i = 0; i < ArrayCount; i++)
                 {
                     string o2;
                     ret |= WriteSingle(
-                        hdmipmaps is null ? null : hdmipmaps.Skip(i * hdmipmaps.Length / (int)Images).Take(hdmipmaps.Length / (int)Images).ToArray(),
-                        mipmaps[i],
+                        hdmipmaps is null ? null : hdmipmaps.Skip(i * hdmipmaps.Length / (int)ArrayCount).Take(hdmipmaps.Length / (int)ArrayCount).ToArray(),
+                        mipmaps.Skip(i * mipmaps.Count / (int)ArrayCount).Take(mipmaps.Count / (int)ArrayCount).ToList(),
                         i, out o2);
                     output += o2;
                 }
@@ -97,10 +97,10 @@ namespace SpideyTextureScaler
                 return ret;
             }
             else
-                return WriteSingle(hdmipmaps, mipmaps[0], -1, out output);
+                return WriteSingle(hdmipmaps, mipmaps, -1, out output);
         }
 
-        public bool WriteSingle(byte[] hdmipmaps, byte[] mipmaps, int image, out string output)
+        public bool WriteSingle(byte[] hdmipmaps, List<byte[]> mipmaps, int image, out string output)
         {
             // just assume everything has been set correctly!
             output = "";
@@ -117,7 +117,7 @@ namespace SpideyTextureScaler
                 bw.Write((uint)Height);
                 bw.Write((uint)Width);
                 // linearsize
-                bw.Write((uint)(hdmipmaps is null ? basemipsize : basemipsize * 1 << (2 * (int)HDMipmaps)));
+                bw.Write((uint)((hdmipmaps is null ? basemipsize: basemipsize * 1 << (2 * (int)HDMipmaps)) / Cubemaps));
                 // depth
                 bw.Write((uint)0);
                 bw.Write((uint)((uint)Mipmaps + (uint)HDMipmaps));
@@ -133,24 +133,29 @@ namespace SpideyTextureScaler
 
                 // caps
                 bw.Write((uint)(DDS_Caps.DDSCAPS_TEXTURE | (Mipmaps + HDMipmaps > 0 ? DDS_Caps.DDSCAPS_COMPLEX | DDS_Caps.DDSCAPS_MIPMAP : 0)));
-                // caps2-4, reserved
-                bw.Write(new byte[4 * 4]);
+                // caps2
+                bw.Write((uint)(Cubemaps > 1 ? DDS_Caps2.DDS_CUBEMAP_ALLFACES : 0));
+                // caps3-4, reserved
+                bw.Write(new byte[3 * 4]);
 
                 // DXT10 header
                 bw.Write((uint)Format);
                 // dimension - 2d or 3d
                 bw.Write((uint)(Height > 1 ? 3 : 2));
                 // misc
-                bw.Write((uint)0);
+                bw.Write((uint)(Cubemaps > 1 ? miscFlag.DDS_RESOURCE_MISC_TEXTURECUBE : 0));
                 // arraySize
                 bw.Write((uint)1);
                 // misc flags - DDS_ALPHA_MODE_UNKNOWN
                 bw.Write((uint)0);
 
-                if (hdmipmaps is not null)
-                    bw.Write(hdmipmaps);
+                for (int i = 0; i < Cubemaps; i++)
+                {
+                    if (hdmipmaps is not null)
+                        bw.Write(hdmipmaps.Skip((int)(i * hdmipmaps.Length / Cubemaps)).Take((int)(hdmipmaps.Length / Cubemaps)).ToArray());
 
-                bw.Write(mipmaps);
+                    bw.Write(mipmaps[i]);
+                }
 
                 output += $"Wrote {fs.Position} bytes to: {fn}\r\n";
             }

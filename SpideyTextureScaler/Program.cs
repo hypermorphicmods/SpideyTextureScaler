@@ -116,7 +116,7 @@ namespace SpideyTextureScaler
             savedds.Filename = Path.ChangeExtension(tex.Filename, ".dds");
             savedds.Filename = outputdir != "" ? Path.Combine(outputdir, Path.GetFileName(savedds.Filename)) : savedds.Filename;
             savedds.Mipmaps = tex.Mipmaps;
-            savedds.Images = tex.Images;
+            savedds.ArrayCount = tex.ArrayCount;
             savedds.Format = tex.Format;
             savedds.basemipsize = tex.basemipsize;
             byte[] hdmips = null;
@@ -163,7 +163,7 @@ namespace SpideyTextureScaler
             int errorcol;
             var dds = (DDS)texturestats[1];
             dds.Filename = ddsInfo.FullName;
-            if (tex.Images > 1 && !dds.Filename.ToLower().EndsWith(".a0.dds"))
+            if (tex.ArrayCount > 1 && !dds.Filename.ToLower().EndsWith(".a0.dds"))
                 throw new Exception("Array textures must be named with .Ax.dds convention");
             dds.Read(out output, out errorrow, out errorcol);
             Console.WriteLine(output);
@@ -172,7 +172,7 @@ namespace SpideyTextureScaler
 
             var ddss = new List<DDS>() { dds };
             var stub = ddss[0].Filename.Substring(0, ddss[0].Filename.Length - ".a0.dds".Length);
-            for (int i = 1; i < tex.Images; i++)
+            for (int i = 1; i < tex.ArrayCount; i++)
             {
                 ddss.Add(new DDS());
                 ddss[i].Filename = $"{stub}.A{i}.dds";
@@ -215,7 +215,9 @@ namespace SpideyTextureScaler
         public uint? Mipmaps { get; set; }
         public uint? HDMipmaps { get; set; }
         public double? BytesPerPixel { get; set; }
-        public uint? Images { get; set;  }
+        public uint? ArrayCount { get; set;  }
+        public uint? Cubemaps { get; set; }
+        public uint? Images { get { return ArrayCount * (Cubemaps ?? 1); } }
         public uint? Size { get; set; }
         public uint? HDSize { get; set; }
         public DXGI_FORMAT? Format { get; set; }
@@ -244,6 +246,83 @@ namespace SpideyTextureScaler
             Format = null;
             Ready = false;
             Filename = defaultfilelabel;
+        }
+
+        public int CalculateExpectedSize()
+        {
+            // avoid float errors
+            int divisor = 0, multiplier = 1;
+            bool compressed = true;
+            switch (((ushort)Format, (ushort)Format))
+            {
+                // BC1
+                case ( >= 70, <= 72):
+                    divisor = 16 / 8;
+                    break;
+                // BC2
+                case ( >= 73, <= 75):
+                // BC3
+                case ( >= 76, <= 78):
+                    divisor = 16 / 16;
+                    break;
+                // BC4
+                case ( >= 79, <= 81):
+                    divisor = 16 / 8;
+                    break;
+                // BC5
+                case ( >= 82, <= 84):
+                // BC6H
+                case ( >= 94, <= 96):
+                // BC7
+                case ( >= 97, <= 99):
+                    divisor = 16 / 16;
+                    break;
+                default:
+                    compressed = false;
+                    break;
+            }
+
+            if (divisor == 0)
+                switch (((ushort)Format, (ushort)Format))
+                {
+                    // R8G8B8A8
+                    case ( >= 27, <= 32):
+                    // R16G16
+                    case ( >= 33, <= 38):
+                    // R10G10B10A2, R11G11B10
+                    case ( >= 23, <= 26):
+                    // *32, *24*8
+                    case ( >= 39, <= 47):
+                        divisor = 1;
+                        multiplier = 4;
+                        break;
+                    // R8, A8
+                    case ( >= 60, <= 65):
+                        divisor = 1;
+                        break;
+                    // R8G8, R16, D16
+                    case ( >= 48, <= 59):
+                        divisor = 1;
+                        multiplier = 2;
+                        break;
+                    // R16G16B16A16, R32G32, *32*8*24
+                    case ( >= 9, <= 21):
+                        divisor = 1;
+                        multiplier = 8;
+                        break;
+                }
+
+            if (divisor == 0)
+                return 0;
+
+            basemipsize = (int)((Height ?? 0) * (Width ?? 0) * multiplier / divisor);
+            int expectedsize = 0;
+            int minmipsize = compressed ? 16 / divisor : 0;
+            BytesPerPixel = minmipsize / 16;
+            for (int j = 0; j < HDMipmaps + Mipmaps; j++)
+                expectedsize += Math.Max(basemipsize >> (j * 2), minmipsize);
+
+            return expectedsize;
         }
     }
 }

@@ -111,7 +111,7 @@ namespace SpideyTextureScaler
             Height = dds.Height;
             sd_width = tex.sd_width;
             sd_height = tex.sd_height;
-            Images = tex.Images;
+            ArrayCount = tex.ArrayCount;
             Size = tex.Size;
             Mipmaps = tex.Mipmaps;
             uint extrasdmipsize = 0;
@@ -129,7 +129,7 @@ namespace SpideyTextureScaler
             {
                 HDMipmaps = extrasdmipmaps - extrasd;
                 extrasdmipmaps = extrasd;
-                HDSize = sizeincrease * Images;
+                HDSize = sizeincrease * ArrayCount;
                 sizeincrease = 0;
             }
             else
@@ -142,7 +142,7 @@ namespace SpideyTextureScaler
             for (int i = (int)extrasdmipmaps; i > 0; i--)
                 sizeincrease += (uint)(tex.basemipsize << (2 * i));
 
-            extrasdmipsize = sizeincrease * (uint)Images;
+            extrasdmipsize = sizeincrease * (uint)ArrayCount;
             sd_width <<= (int)extrasdmipmaps;
             sd_height <<= (int)extrasdmipmaps;
 
@@ -150,7 +150,7 @@ namespace SpideyTextureScaler
             {
                 if (ddss[i].Mipmaps < HDMipmaps + extrasdmipmaps + tex.Mipmaps)
                 {
-                    output += $"Not enough mipmaps in DDS file {(tex.Images > 1 ? "A{i} " : " ")}to replace this texture (needs {HDMipmaps + extrasdmipmaps + tex.Mipmaps})\r\n";
+                    output += $"Not enough mipmaps in DDS file {(tex.ArrayCount > 1 ? "A{i} " : " ")}to replace this texture (needs {HDMipmaps + extrasdmipmaps + tex.Mipmaps})\r\n";
                     errorrow = 1;
                     errorcol = 4;
                     return;
@@ -170,9 +170,9 @@ namespace SpideyTextureScaler
                 using (var br = new BinaryReader(fs))
                 {
                     fs.Seek(ddss[i].dataoffset, SeekOrigin.Begin);
-                    hdmips.Add(br.ReadBytes((int)(HDSize / Images)));
-                    extrasdmips.Add(br.ReadBytes((int)(extrasdmipsize / Images)));
-                    sdmips.Add(br.ReadBytes((int)(tex.Size / Images)));
+                    hdmips.Add(br.ReadBytes((int)(HDSize / ArrayCount)));
+                    extrasdmips.Add(br.ReadBytes((int)(extrasdmipsize / ArrayCount)));
+                    sdmips.Add(br.ReadBytes((int)(tex.Size / ArrayCount)));
                 }
             }
 

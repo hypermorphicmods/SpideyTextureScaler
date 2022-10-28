@@ -24,8 +24,8 @@ namespace SpideyTextureScaler
 
         private void UpdateControls()
         {
-            if (program.texturestats[0].Ready && program.texturestats[0].Images > 0 && program.texturestats[1].Ready && 
-                program.texturestats[1].Images < program.texturestats[0].Images)
+            if (program.texturestats[0].Ready && program.texturestats[0].ArrayCount > 0 && program.texturestats[1].Ready && 
+                program.texturestats[1].ArrayCount < program.texturestats[0].ArrayCount)
             {
                 program.texturestats[1].Ready = false;
                 MarkError(1, 6);
@@ -81,8 +81,8 @@ namespace SpideyTextureScaler
                     saveddsbutton.Enabled = true;
                     this.Text = $"{Path.GetFileNameWithoutExtension(Path.GetFileName(obj.Filename))} - SpideyTextureScaler v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
                 }
-                ddsfilenamelabel.Text = Path.GetFileName(Path.ChangeExtension(obj.Filename, (obj.Images > 1 ? ".Ax.dds" : ".dds")));
-                saveddsbutton.Text = obj.Images > 1 ? "Save multiple .dds" : "Save as .dds";
+                ddsfilenamelabel.Text = Path.GetFileName(Path.ChangeExtension(obj.Filename, (obj.ArrayCount > 1 ? ".Ax.dds" : ".dds")));
+                saveddsbutton.Text = obj.ArrayCount > 1 ? "Save multiple .dds" : "Save as .dds";
 
                 outputbox.Text = output;
             }
@@ -101,7 +101,8 @@ namespace SpideyTextureScaler
             var savedds = new DDS();
             savedds.Filename = Path.ChangeExtension(tex.Filename, ".dds");
             savedds.Mipmaps = tex.Mipmaps;
-            savedds.Images = tex.Images;
+            savedds.ArrayCount = tex.ArrayCount;
+            savedds.Cubemaps = tex.Cubemaps;
             savedds.Format = tex.Format;
             savedds.basemipsize = tex.basemipsize;
             byte[] hdmips = null;
@@ -139,7 +140,7 @@ namespace SpideyTextureScaler
         private void ddsbutton_Click(object sender, EventArgs e)
         {
             var f = new OpenFileDialog();
-            f.Filter = program.texturestats[0].Images > 1  ? "DirectDraw Surface Array (*.A0.dds)|*.A0.dds" : "DirectDraw Surface (*.dds)|*.dds";
+            f.Filter = program.texturestats[0].ArrayCount > 1  ? "DirectDraw Surface Array (*.A0.dds)|*.A0.dds" : "DirectDraw Surface (*.dds)|*.dds";
             if (lastddsdir is not null)
                 f.InitialDirectory = lastddsdir;
             var obj = (DDS)program.texturestats[1];
@@ -156,7 +157,7 @@ namespace SpideyTextureScaler
                 obj.Filename = f.FileName;
                 lastddsdir = Path.GetDirectoryName(f.FileName) + @"\";
                 obj.Read(out output, out errorrow, out errorcol);
-                obj.Images = 1;
+                obj.ArrayCount = 1;
                 if (program.texturestats[2].Filename == Output.defaultfilelabel)
                 {
                     var suggestfn = Path.ChangeExtension(f.FileName, ".texture");
@@ -172,12 +173,12 @@ namespace SpideyTextureScaler
                 if (obj.Filename.ToLower().EndsWith(".a0.dds"))
                 {
                     var stub = obj.Filename.Substring(0, obj.Filename.Length - ".a0.dds".Length);
-                    for (obj.Images = 1; obj.Images < 32; obj.Images++)
+                    for (obj.ArrayCount = 1; obj.ArrayCount < 32; obj.ArrayCount++)
                     {
-                        if (!File.Exists($"{stub}.A{obj.Images}.dds"))
+                        if (!File.Exists($"{stub}.A{obj.ArrayCount}.dds"))
                             break;
                     }
-                    output += $"({obj.Images} textures available)\r\n";
+                    output += $"({obj.ArrayCount} textures available)\r\n";
                 }
                 outputbox.Text = output;
             }
@@ -252,7 +253,7 @@ namespace SpideyTextureScaler
 
             var ddss = new List<DDS>() { (DDS)(program.texturestats[1]) };
             var stub = ddss[0].Filename.Substring(0, ddss[0].Filename.Length - ".a0.dds".Length);
-            for (int i = 1; i < program.texturestats[0].Images ; i++)
+            for (int i = 1; i < program.texturestats[0].ArrayCount ; i++)
             {
                 ddss.Add(new DDS());
                 ddss[i].Filename = $"{stub}.A{i}.dds";

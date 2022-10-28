@@ -69,49 +69,38 @@ namespace SpideyTextureScaler
                 Height = br.ReadUInt16();
                 sd_width = br.ReadUInt16();
                 sd_height = br.ReadUInt16();
-                Images = br.ReadUInt16();
-
-                int s = (int)(HDSize / Images);
-                int maxmipexp = (int)Math.Floor(Math.Log(s) / Math.Log(2));
-                if (HDSize > 0)
-                {
-                    for (int i = maxmipexp; s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
-                    {
-                        HDMipmaps++;
-                        s -= 1 << i;
-                    }
-                }
-
-                s = (int)(Size / Images);
-                maxmipexp = (int)Math.Floor(Math.Log(s) / Math.Log(2));
-                basemipsize = 1 << maxmipexp;
-                for (int i = maxmipexp; s >= 1 << i && (s & (1 << i)) > 0; i -= 2)
-                {
-                    Mipmaps++;
-                    s -= 1 << i;
-                }
-
-                BytesPerPixel = Math.Pow(2, (Math.Floor(Math.Log((double)basemipsize / sd_width / sd_height) / Math.Log(2))));
-                aspect = (int)(Math.Log((double)Width / (double)Height) / Math.Log(2));
-
+                ArrayCount = br.ReadUInt16();
                 br.ReadByte();
                 var channels = br.ReadByte();
                 var dxgi_format = br.ReadUInt16();
                 Format = (DXGI_FORMAT?)dxgi_format;
                 br.ReadBytes(8);
-                if (Mipmaps != br.ReadByte())
-                {
-                    output += "Mipmap count discrepancy\r\n";
-                    errorcol = 4;
-                    return false;
-                }
+                Mipmaps = br.ReadByte();
                 br.ReadByte();
-                if (HDMipmaps != br.ReadByte())
+                HDMipmaps = br.ReadByte();
+
+                Cubemaps = 1;
+                int expectedsize = CalculateExpectedSize();
+                if (expectedsize == 0)
                 {
-                    output += "HDMipmap count discrepancy\r\n";
-                    errorcol = 5;
+                    output += $"Support for DXGI format not implemented: {Format}\r\n";
+                    errorcol = 1;
                     return false;
                 }
+
+                if (expectedsize * ArrayCount != (HDSize + Size))
+                {
+                    if (expectedsize * ArrayCount * 6 == (HDSize + Size))
+                        Cubemaps = 6;
+                    else
+                    {
+                        output += "Image data size does not match expected\r\n";
+                        errorcol = 1;
+                        return false;
+                    }
+                }
+
+                aspect = (int)(Math.Log((double)Width / (double)Height) / Math.Log(2));
 
                 fs.Seek(11, SeekOrigin.Current);
                 mipmaps = new();
@@ -137,7 +126,7 @@ namespace SpideyTextureScaler
                     hdtxt = "hd part MISSING";
                     hdfilename = "";
                 }
-                var arraytxt = Images > 1 ? $"with {Images} packed textures " : "";
+                var arraytxt = Images > 1 ? $"with {ArrayCount} packed {(Cubemaps > 1 ? "cubemaps" : "textures")} " : "";
                 output += $"Source {arraytxt}loaded ({hdtxt})\r\n";
 
                 if (hdfilename != "")
