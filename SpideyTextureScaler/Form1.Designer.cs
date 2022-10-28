@@ -215,7 +215,7 @@
             this.hDMipmapsDataGridViewTextBoxColumn.ReadOnly = true;
             this.hDMipmapsDataGridViewTextBoxColumn.Width = 170;
             // 
-            // Images
+            // ArrayCount
             // 
             this.Images.DataPropertyName = "Images";
             this.Images.HeaderText = "Images";
