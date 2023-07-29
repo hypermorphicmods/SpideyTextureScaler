@@ -1,5 +1,15 @@
 ﻿# Change Log
 
+## 1.3.3
+
+### Added
+- Texture IDs for Ratchet & Clank: Rift Apart textures
+
+## 1.3.2
+
+### Fixed
+- Allow export of cubemaps to DDS
+
 ## 1.3.1
 
 ### Fixed

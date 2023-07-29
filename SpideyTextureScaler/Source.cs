@@ -13,10 +13,20 @@ namespace SpideyTextureScaler
         public List<byte[]> mipmaps;
         public string hdfilename;
         public bool exportable;
+        public List<uint> resourceids;
 
         public Source()
         {
             Name = "Source";
+            resourceids = new List<uint>()
+            {
+                // Texture resource IDs for:
+                // Marvel's Spider-Man Remastered
+                // Marvel's Spider-Man: Miles Morales
+                0x5C4580B9,
+                // Ratchet & Clank: Rift Apart
+                0x8F53A199,
+            };
         }
 
         public override bool Read(out string output, out int errorrow, out int errorcol)
@@ -29,10 +39,10 @@ namespace SpideyTextureScaler
             using (var fs = File.Open(Filename, FileMode.Open, FileAccess.Read))
             using (BinaryReader br = new BinaryReader(fs))
             {
-                if (br.ReadUInt32() != 1548058809 ||
+                if (!resourceids.Contains(br.ReadUInt32()) ||
                     fs.Seek(32, SeekOrigin.Current) < 1 ||
                     br.ReadUInt32() != 1145132081 ||
-                    br.ReadUInt32() != 1548058809)
+                    !resourceids.Contains(br.ReadUInt32()))
                 {
                     output += "Not a texture asset.  Please import the lowest resolution copy.\r\n";
                     errorcol = 1;
